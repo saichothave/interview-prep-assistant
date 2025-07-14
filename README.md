@@ -1,6 +1,6 @@
 # 🎯 Interview Prep Assistant (Backend)
 
-This is the backend server for the **Resume Bullet & Interview Prep Assistant**. It generates high-impact resume bullet points and relevant technical interview questions from user-provided experience stories using the Mistral language model via [Ollama](https://ollama.com/).
+This is the backend server for the **Resume Bullet & Interview Prep Assistant** (https://github.com/saichothave/resume-bullet-generator). It generates high-impact resume bullet points and relevant technical interview questions from user-provided experience stories using the Mistral language model via [Ollama](https://ollama.com/).
 
 ## 🚀 Features
 

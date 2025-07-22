@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+pydantic
+langchain
+langchain-google-genai
+PyMuPDF
+python-multipart

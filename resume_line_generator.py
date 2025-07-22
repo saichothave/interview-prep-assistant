@@ -35,27 +35,92 @@ class LLMService:
     def _init_chains(self):
         self.bullet_chain = self._build_chain(PromptTemplate(
             input_variables=["story", "instructions"],
-            template="""..."""
+            template="""
+                 You are a resume bullet point generator.
+                    Convert the following paragraph into 2-3 single-line bullet points.
+                    Rules:
+                    - Each bullet must start with a **strong action verb** or impact phrase
+                    - Follow What → How → Effect structure
+                    - Each bullet must be a **single line only**, fitting a standard resume without wrapping
+                    - Use as much space as possible, but **do not exceed 110 characters or 20 words**
+                    - Start and end each bullet on the same line (no orphan words)
+                    - Output must always be 2 or 3 bullets, no explanations
+                    User Instructions: {instructions}
+                    Input Paragraph:
+                    {story}
+                    Output (formatted bullet points only):
+                """
+                    # - Bullet 1 = objective/context
+                    # - Bullet 2 = what you built + outcome
+                    # - Bullet 3 = effect or value added (if applicable)
         ))
 
         self.highlight_chain = self._build_chain(PromptTemplate(
             input_variables=["bullet"],
-            template="""..."""
+            template="""
+                You are a resume enhancement expert. Rewrite the following resume bullet point by highlighting **important words**, **technologies** and **techniques** using Markdown-style bold.
+                Rules:
+                - Do not overload with too many highlights, focus on the most impactful terms only for highlighting.
+                - Choose maximum 3 highlights per bullet strictly.
+                - Resume Bullet: {bullet}
+
+                Output (with important keywords in bold):
+            """
         ))
 
         self.refine_chain = self._build_chain(PromptTemplate(
             input_variables=["raw_bullets"],
-            template="""..."""
+            template="""
+                You are a resume formatting assistant.
+                    Your task is to refine the given resume bullets using the following rules:
+                    - Begin each bullet with a strong **action verb**
+                    - Follow the **What - How - Effect** structure
+                    - Each bullet must be a **single line only**, with **no line breaks or wrapping**
+                    - Use as much space as possible, but **do not exceed 110 characters or 20 words**
+                    - Avoid short or vague lines — make each line information-dense and valuable
+                    - Output **exactly 2 or 3 refined bullet points**
+                    - Return only the final list of bullets — no explanation or extra text
+                    - Strictly follow What - How - Effect structure
+                    Raw Bullets:
+                    {raw_bullets}
+                    Refined Output:
+            """
         ))
 
         self.questions_chain = self._build_chain(PromptTemplate(
             input_variables=["bullet", "story"],
-            template="""..."""
+            template="""
+                You are a technical interviewer. Based on the following resume bullet point, generate 3 to 5 interview questions that assess technical depth, decision-making, tools used, and measurable impact.
+                    Guidelines:
+                    - Do not explain anything.
+                    - Only list the questions.
+                    - Make them short, relevant and concise.
+                    Resume Line:
+                    "{bullet}"
+
+                    Context Story:
+                    "{story}"
+                    list of questions:
+                    - Use bullet points for each question.
+                    - One question per line.
+                    Output:
+            """
         ))
 
         self.chat_chain = self._build_chain(PromptTemplate(
             input_variables=["story", "bullet", "questions", "user_query"],
-            template="""..."""
+            template="""
+                You are a career assistant helping a user prepare for interviews.
+                Context:
+                - Original story: {story}
+                - Resume bullet point: {bullet}
+                - Suggested interview questions: {questions}
+                User's question: {user_query}
+                Answer:
+                - Be relevant to the resume bullet and job preparation.
+                - Keep it clear, practical, and helpful.
+                - Clearly convey: What was done + How it was done + What impact was achieved (if applicable).
+            """
         ))
 
         self.resume_parse_chain = self._build_chain(PromptTemplate(
